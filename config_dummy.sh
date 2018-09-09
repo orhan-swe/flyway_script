@@ -4,6 +4,8 @@
 usr="username"
 pass="password"
 db="db_name"
+host="127.0.0.1"
+port="3306"
 version="v0.3"
 
 

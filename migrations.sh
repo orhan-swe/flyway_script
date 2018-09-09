@@ -11,7 +11,7 @@ fi
 source "./config.sh";
 
 # make sure we get all input parameters
-if [[ ! $usr || ! $pass || ! $db || ! $version || ! $flyway_dir ]]; then {
+if [[ ! $usr || ! $pass || ! $db || ! $version || ! $flyway_dir || ! $port ]]; then {
     #note: folder_data may be empty so that is why it is not checked..
      echo -e "Please create your own copy of config.sh file (look at config_dummy.sh)..."
      exit 0;
@@ -62,7 +62,8 @@ take_data_backup() {
         sed '1s/^/set FOREIGN_KEY_CHECKS = 0; /' | \
         # foreign_key_checks comments at end of the file:
         sed '$aset FOREIGN_KEY_CHECKS = 1' > \
-        $filename_data_backup
+        $filename_data_backup \
+    --port=$port
 }
 
 create_db_data_baseline_file() {
@@ -88,7 +89,8 @@ create_db_data_baseline_file() {
         sed '1s/^/set FOREIGN_KEY_CHECKS = 0; \n/' | \
         # foreign_key_checks comments at end of the file:
         sed '$aset FOREIGN_KEY_CHECKS = 1' > \
-        $folder_data/$filename_data
+        $folder_data/$filename_data \
+    --port=$port
 }
 
 take_full_backup() {
@@ -99,7 +101,8 @@ take_full_backup() {
         --password=$pass \
 	--host=$host \
         $db > \
-        $filename_full_backup
+        $filename_full_backup \
+    --port=$port
 }
 
 should_we_continue() {
@@ -143,7 +146,8 @@ create_db_structure_baseline_file() {
         sed '1s/^/set FOREIGN_KEY_CHECKS = 0; /' | \
         # readd foreign_key_checks comments at end of the file:
         sed '$aset FOREIGN_KEY_CHECKS = 1' > \
-        $folder_migrations/$filename_structure
+        $folder_migrations/$filename_structure \
+    --port=$port
 }
 
 
@@ -155,7 +159,12 @@ write_data_to_db_from_data_file() {
         --password=$pass \
 	--host=$host \
         $db \
-        < $filename_data_backup
+        < $filename_data_backup \
+    --port=$port
+}
+
+simple_test() {
+    echo -e "Test pass"
 }
 
 ##run when you do not have any important data in your db, or it is empty
